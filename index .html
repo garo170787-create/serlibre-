@@ -143,12 +143,11 @@
         .card p { line-height: 1.6; font-size: 0.85rem; color: #DDD; }
         
         .pdf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .add-btn { background: rgba(0,255,255,0.1); border: 1px solid var(--cyan); color: var(--cyan); padding: 5px 15px; cursor: pointer; border-radius: 4px; }
         .pdf-list { list-style: none; max-height: 350px; overflow-y: auto; }
-        .pdf-list li { padding: 10px; border-bottom: 1px solid rgba(0,255,255,0.15); display: flex; justify-content: space-between; }
+        .pdf-list li { padding: 10px; border-bottom: 1px solid rgba(0,255,255,0.15); display: flex; justify-content: space-between; align-items: center; }
         .pdf-list a { color: #DDD; text-decoration: none; flex: 1; cursor: pointer; }
         .pdf-list a:hover { color: var(--cyan); }
-        .delete-pdf { background: none; border: none; color: #ff8888; cursor: pointer; }
+        .pdf-note { font-size: 0.55rem; color: #669; text-align: center; margin-top: 10px; }
         
         .talleres-grid { display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; }
         .taller-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,255,0.2); padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-radius: 6px; transition: 0.3s; }
@@ -177,36 +176,6 @@
         }
         .nav-dot { width: 10px; height: 10px; background: #446; border-radius: 50%; cursor: pointer; }
         .nav-dot.active { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transform: scale(1.3); }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(10,12,18,0.95);
-            backdrop-filter: blur(15px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: #141923;
-            border: 1px solid var(--cyan);
-            padding: 35px;
-            width: 90%;
-            max-width: 480px;
-            border-radius: 12px;
-        }
-        .modal-content input {
-            width: 100%;
-            padding: 12px;
-            margin: 12px 0;
-            background: #0a0c12;
-            border: 1px solid var(--cyan);
-            color: var(--cyan);
-            border-radius: 6px;
-        }
         
         .loading {
             position: fixed;
@@ -255,7 +224,7 @@
         <div class="nav-dot" data-section="portal"></div>
     </div>
 
-    <!-- HERO - Video con ruta EXACTA -->
+    <!-- HERO -->
     <section id="hero" class="section">
         <div class="video-bg">
             <video autoplay muted loop playsinline>
@@ -270,7 +239,7 @@
         </div>
     </section>
 
-    <!-- FILOSOFÍA - Video con ruta EXACTA -->
+    <!-- FILOSOFÍA -->
     <section id="filosofia" class="section">
         <div class="video-bg">
             <video autoplay muted loop playsinline>
@@ -288,7 +257,7 @@
         </div>
     </section>
 
-    <!-- PORTAL - Video con ruta EXACTA -->
+    <!-- PORTAL -->
     <section id="portal" class="section">
         <div class="video-bg">
             <video autoplay muted loop playsinline>
@@ -299,9 +268,11 @@
         <div class="container fade">
             <div class="grid-3">
                 <div class="card">
-                    <div class="pdf-header"><h3>> BIBLIOTECA_PDF</h3><button class="add-btn" id="addPdfBtn">➕ AGREGAR</button></div>
+                    <div class="pdf-header">
+                        <h3>> BIBLIOTECA_PDF</h3>
+                    </div>
                     <ul class="pdf-list" id="pdfList"></ul>
-                    <div style="font-size:0.6rem; text-align:center; margin-top:8px;">⚡ Los PDFs se guardan automáticamente</div>
+                    <div class="pdf-note">⚡ Los PDFs se cargan desde el servidor</div>
                 </div>
                 <div class="card">
                     <h3>> TALLERES_Y_CURSOS</h3>
@@ -318,32 +289,67 @@
         </div>
     </section>
 
-    <!-- MODAL PARA AGREGAR PDF -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <h3 style="color:#0ff; margin-bottom:20px;">> AGREGAR PDF</h3>
-            <input type="text" id="pdfName" placeholder="Nombre del PDF (ej: El Retorno)">
-            <input type="text" id="pdfUrl" placeholder="Ruta del PDF (ej: pdfs/documento.pdf)">
-            <div style="display:flex; gap:15px; margin-top:25px;">
-                <button id="savePdf" style="background:rgba(0,255,255,0.15); border:1px solid #0ff; color:#0ff; padding:10px; border-radius:6px;">💾 GUARDAR</button>
-                <button id="cancelPdf" style="background:transparent; border:1px solid #446; color:#CCC; padding:10px; border-radius:6px;">CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // FACEBOOK FIJO
+        // FACEBOOK
         const FACEBOOK_URL = 'https://www.facebook.com/share/18j41RYAnB/';
         function openFacebook() { window.open(FACEBOOK_URL, '_blank'); }
+
+        // ==============================================
+        // CARGAR PDFS DESDE EL SERVIDOR (pdfs.json)
+        // SIN localStorage - TODOS VEN LO MISMO
+        // ==============================================
+        async function cargarPDFs() {
+            const container = document.getElementById('pdfList');
+            if (container) {
+                container.innerHTML = '<li style="color:#669;">🔄 Cargando biblioteca...</li>';
+            }
+            
+            try {
+                // Añadimos timestamp para evitar caché
+                const response = await fetch('pdfs.json?v=' + Date.now());
+                if (response.ok) {
+                    const pdfs = await response.json();
+                    renderPDFs(pdfs);
+                } else {
+                    throw new Error('No se encontró pdfs.json');
+                }
+            } catch (error) {
+                console.error('Error cargando PDFs:', error);
+                if (container) {
+                    container.innerHTML = '<li style="color:#f66;">❌ Error: No se encuentra el archivo pdfs.json</li>';
+                }
+            }
+        }
+
+        function renderPDFs(pdfs) {
+            const container = document.getElementById('pdfList');
+            if (!container) return;
+            
+            if (!pdfs || pdfs.length === 0) {
+                container.innerHTML = '<li style="color:#669;">—— sin PDFs disponibles ——</li>';
+                return;
+            }
+            
+            container.innerHTML = pdfs.map(pdf => `
+                <li>
+                    <a href="${pdf.url}" target="_blank">📄 ${pdf.nombre}</a>
+                </li>
+            `).join('');
+        }
 
         // REPRODUCIR VIDEOS
         function iniciarVideos() {
             const videos = document.querySelectorAll('.video-bg video');
             videos.forEach(video => {
-                video.play().catch(e => console.log('Error reproduciendo video:', e));
+                video.play().catch(e => console.log('Error:', e));
             });
         }
-        document.addEventListener('DOMContentLoaded', () => setTimeout(iniciarVideos, 500));
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(iniciarVideos, 500);
+            cargarPDFs();
+        });
+        
         window.addEventListener('scroll', iniciarVideos);
         window.addEventListener('click', iniciarVideos);
         window.addEventListener('touchstart', iniciarVideos);
@@ -382,43 +388,13 @@
             setTimeout(() => { loading.classList.remove('active'); if(cb) cb(); }, delay);
         }
 
-        // PDF ADMIN
-        let pdfs = [];
-        function loadPdfs() {
-            const saved = localStorage.getItem('serlibre_pdfs');
-            if(saved) { try { pdfs = JSON.parse(saved); } catch(e) {} }
-            if(pdfs.length === 0) pdfs = [
-                { nombre: "El Retorno", url: "pdfs/retorno.pdf" },
-                { nombre: "El Espejo", url: "pdfs/espejo.pdf" }
-            ];
-            savePdfs(); renderPdfs();
-        }
-        function savePdfs() { localStorage.setItem('serlibre_pdfs', JSON.stringify(pdfs)); }
-        function renderPdfs() {
-            const container = document.getElementById('pdfList');
-            if(!container) return;
-            if(pdfs.length === 0) { container.innerHTML = '<li style="color:#666;">—— sin PDFs ——</li>'; return; }
-            container.innerHTML = pdfs.map((p,i) => `<li><a href="${p.url}" target="_blank">📄 ${p.nombre}</a><button class="delete-pdf" data-i="${i}">✖</button></li>`).join('');
-            document.querySelectorAll('.delete-pdf').forEach(btn => {
-                btn.onclick = () => { pdfs.splice(parseInt(btn.dataset.i),1); savePdfs(); renderPdfs(); };
-            });
-        }
-        const pdfModal = document.getElementById('modal');
-        document.getElementById('addPdfBtn').onclick = () => pdfModal.classList.add('active');
-        document.getElementById('savePdf').onclick = () => {
-            const n = document.getElementById('pdfName').value.trim();
-            const u = document.getElementById('pdfUrl').value.trim();
-            if(n && u) { pdfs.push({ nombre: n, url: u }); savePdfs(); renderPdfs(); pdfModal.classList.remove('active'); }
-            else alert("❌ Completa ambos campos");
-        };
-        document.getElementById('cancelPdf').onclick = () => pdfModal.classList.remove('active');
-
         // TALLERES
         const talleres = [
             { file: "espejo3.html", title: "EL ESPEJO", desc: "Autobservación y reflejo interior", icon: "🪞" },
             { file: "coherencia.html", title: "COHERENCIA", desc: "Alineación mente-emoción", icon: "⚡" },
             { file: "chatbot_coherencia.html", title: "CHATBOT", desc: "Asistente cognitivo", icon: "🤖" }
         ];
+        
         function renderTalleres() {
             const c = document.getElementById('talleresGrid');
             if(!c) return;
@@ -443,10 +419,9 @@
         dots.forEach(d => { d.onclick = () => document.getElementById(d.dataset.section).scrollIntoView({ behavior: 'smooth' }); });
         updateDot();
 
-        loadPdfs();
         renderTalleres();
-        console.log("%c✅ SER LIBRE v14.0 - RUTAS EXACTAS", "color: #0ff; font-size: 14px");
-        console.log("%c🎬 Videos esperados: fondo_bienvenida.mp4, fondo_filosofia.mp4, fondo_recursos.mp4", "color: #0ff;");
+        console.log("%c✅ SER LIBRE v17.0 - PDFS DESDE SERVIDOR (SIN localStorage)", "color: #0ff; font-size: 14px");
+        console.log("%c📄 Los PDFs se cargan desde pdfs.json - Todos los usuarios ven lo mismo", "color: #0ff;");
     </script>
 </body>
 </html>
