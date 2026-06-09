@@ -224,7 +224,7 @@
         <div class="nav-dot" data-section="portal"></div>
     </div>
 
-    <!-- HERO -->
+    <!-- HERO - CON VIDEO -->
     <section id="hero" class="section">
         <div class="video-bg">
             <video autoplay muted loop playsinline>
@@ -239,7 +239,7 @@
         </div>
     </section>
 
-    <!-- FILOSOFÍA -->
+    <!-- FILOSOFÍA - CON VIDEO -->
     <section id="filosofia" class="section">
         <div class="video-bg">
             <video autoplay muted loop playsinline>
@@ -257,7 +257,7 @@
         </div>
     </section>
 
-    <!-- PORTAL -->
+    <!-- PORTAL - CON VIDEO -->
     <section id="portal" class="section">
         <div class="video-bg">
             <video autoplay muted loop playsinline>
@@ -272,7 +272,7 @@
                         <h3>> BIBLIOTECA_PDF</h3>
                     </div>
                     <ul class="pdf-list" id="pdfList"></ul>
-                    <div class="pdf-note">⚡ Los PDFs se cargan desde el servidor</div>
+                    <div class="pdf-note">⚡ Biblioteca de recursos conscientes</div>
                 </div>
                 <div class="card">
                     <h3>> TALLERES_Y_CURSOS</h3>
@@ -295,42 +295,27 @@
         function openFacebook() { window.open(FACEBOOK_URL, '_blank'); }
 
         // ==============================================
-        // CARGAR PDFS DESDE EL SERVIDOR (pdfs.json)
-        // SIN localStorage - TODOS VEN LO MISMO
+        // LISTA DE PDFS (INTEGRADA EN EL CÓDIGO - FUNCIONA LOCAL Y EN SERVIDOR)
         // ==============================================
-        async function cargarPDFs() {
-            const container = document.getElementById('pdfList');
-            if (container) {
-                container.innerHTML = '<li style="color:#669;">🔄 Cargando biblioteca...</li>';
-            }
-            
-            try {
-                // Añadimos timestamp para evitar caché
-                const response = await fetch('pdfs.json?v=' + Date.now());
-                if (response.ok) {
-                    const pdfs = await response.json();
-                    renderPDFs(pdfs);
-                } else {
-                    throw new Error('No se encontró pdfs.json');
-                }
-            } catch (error) {
-                console.error('Error cargando PDFs:', error);
-                if (container) {
-                    container.innerHTML = '<li style="color:#f66;">❌ Error: No se encuentra el archivo pdfs.json</li>';
-                }
-            }
-        }
+        const listaPDFs = [
+            { nombre: "Antoni D Melo", url: "pdfs/Antoni d melo.pdf" },
+            { nombre: "Caos y Hechicería", url: "pdfs/caos y hechicería.pdf" },
+            { nombre: "Desarrolle su Cerebro", url: "pdfs/desarrolle su cerebro.pdf" },
+            { nombre: "El Poder de las Palabras", url: "pdfs/El poder de las palabras.pdf" },
+            { nombre: "Taller El Espejo Perfecto", url: "pdfs/Taller_El_Espejo_Perfecto (1).pdf" },
+            { nombre: "Taller Profundo Ser Libre", url: "pdfs/taller_profundo_ser_libre (1).pdf" }
+        ];
 
-        function renderPDFs(pdfs) {
+        function cargarPDFs() {
             const container = document.getElementById('pdfList');
             if (!container) return;
             
-            if (!pdfs || pdfs.length === 0) {
+            if (listaPDFs.length === 0) {
                 container.innerHTML = '<li style="color:#669;">—— sin PDFs disponibles ——</li>';
                 return;
             }
             
-            container.innerHTML = pdfs.map(pdf => `
+            container.innerHTML = listaPDFs.map(pdf => `
                 <li>
                     <a href="${pdf.url}" target="_blank">📄 ${pdf.nombre}</a>
                 </li>
@@ -341,7 +326,7 @@
         function iniciarVideos() {
             const videos = document.querySelectorAll('.video-bg video');
             videos.forEach(video => {
-                video.play().catch(e => console.log('Error:', e));
+                video.play().catch(e => console.log('Error reproduciendo video:', e));
             });
         }
         
@@ -420,8 +405,8 @@
         updateDot();
 
         renderTalleres();
-        console.log("%c✅ SER LIBRE v17.0 - PDFS DESDE SERVIDOR (SIN localStorage)", "color: #0ff; font-size: 14px");
-        console.log("%c📄 Los PDFs se cargan desde pdfs.json - Todos los usuarios ven lo mismo", "color: #0ff;");
+        console.log("%c✅ SER LIBRE v19.0 - VIDEOS + PDFS INTEGRADOS", "color: #0ff; font-size: 14px");
+        console.log("%c📄 Los PDFs están en el código - No necesita pdfs.json", "color: #0ff;");
     </script>
 </body>
 </html>
