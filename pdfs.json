@@ -1,0 +1,26 @@
+[
+    {
+        "nombre": "Antoni D Melo",
+        "url": "pdfs/antoni_d_melo.pdf"
+    },
+    {
+        "nombre": "Caos y Hechicería",
+        "url": "pdfs/caos_hechiceria.pdf"
+    },
+    {
+        "nombre": "Desarrolle su Cerebro",
+        "url": "pdfs/desarrolle_cerebro.pdf"
+    },
+    {
+        "nombre": "El Poder de las Palabras",
+        "url": "pdfs/poder_palabras.pdf"
+    },
+    {
+        "nombre": "Taller El Espejo Perfecto",
+        "url": "pdfs/taller_espejo.pdf"
+    },
+    {
+        "nombre": "Taller Profundo Ser Libre",
+        "url": "pdfs/taller_ser_libre.pdf"
+    }
+]
