@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>El Espejo · Conciencia Aplicada · IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0c14;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 1.5rem;
+            color: #eceef5;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #0f121d;
+            border-radius: 2rem;
+            border: 1px solid #2a3248;
+            padding: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            border-left: 4px solid #bc9f4b;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .intro {
+            background: #080b12;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+            border-left: 2px solid #bc9f4b;
+        }
+
+        .pregunta {
+            margin-bottom: 1.8rem;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #bc9f4b;
+        }
+
+        .ayuda {
+            font-size: 0.75rem;
+            color: #8a94b0;
+            margin-bottom: 0.5rem;
+        }
+
+        textarea, select {
+            width: 100%;
+            background: #010103;
+            border: 1px solid #2a3248;
+            border-radius: 1rem;
+            padding: 0.85rem;
+            color: white;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 85px;
+            resize: vertical;
+        }
+
+        button {
+            background: #bc9f4b;
+            border: none;
+            padding: 0.9rem;
+            font-weight: bold;
+            border-radius: 2rem;
+            color: #0a0a0a;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+            font-size: 1rem;
+            transition: all 0.15s;
+        }
+
+        button:hover {
+            background: #d4af37;
+            transform: scale(1.01);
+        }
+
+        .resultado {
+            background: #02060c;
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-left: 4px solid #bc9f4b;
+            display: none;
+        }
+
+        .modulo {
+            background: #11161f;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .punto-ciego {
+            background: #1a1520;
+            border-left: 3px solid #e6a017;
+            padding: 0.7rem;
+            margin: 0.5rem 0;
+            border-radius: 0.8rem;
+        }
+
+        .footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        hr {
+            border-color: #2a3248;
+            margin: 0.8rem 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>🌀 EL ESPEJO · CONCIENCIA APLICADA</h1>
+        <div class="intro">
+            <strong>No eres ni tu mente, ni tu cuerpo, ni lo que ves afuera.</strong><br>
+            Eres la conciencia que sostiene esta realidad.<br>
+            Este sistema no te juzga. Te muestra <strong>tu programa corriéndose</strong> para que puedas elegir diferente.<br>
+            Lo importante no es el pensamiento. Es <strong>lo que SIENTES</strong>.
+        </div>
+
+        <div id="pantallaPreguntas">
+            <div class="pregunta">
+                <label>🧬 MÓDULO CUERPO · ¿Qué sientes en tu cuerpo ahora?</label>
+                <div class="ayuda">Describe dolores, tensiones, ubicación. Ej: "dolor de cabeza 7, tensión en el cuello"</div>
+                <textarea id="cuerpo_input" placeholder="Ej: pecho oprimido, cabeza pesada, hombros tensos, sin molestias..."></textarea>
+            </div>
+
+            <div class="pregunta">
+                <label>💓 MÓDULO EMOCIÓN · Describe tu estado interior ahora (sin filtros)</label>
+                <div class="ayuda">Ej: ansioso, confiado, dudoso, en calma, irritable, expansivo...</div>
+                <textarea id="emocion_input" placeholder="Escribe lo que sientes en tu interior ahora..."></textarea>
+            </div>
+
+            <div class="pregunta">
+                <label>🎯 MÓDULO META · ¿Qué resultado quieres lograr? Escríbelo como si YA HUBIERA OCURRIDO (tiempo pasado)</label>
+                <div class="ayuda">Ej: "Conseguí el trabajo. Lo celebré con mi familia. Siento alivio y alegría en el pecho."</div>
+                <textarea id="meta_input" placeholder="Escribe tu meta como si ya estuviera cumplida..."></textarea>
+            </div>
+
+            <div class="pregunta">
+                <label>🎭 MIEDO · Si NO ocurre, ¿qué es lo peor que crees que pasaría?</label>
+                <textarea id="miedo_input" placeholder="Ej: perder dinero, sentirme un fracaso, quedar mal..."></textarea>
+            </div>
+
+            <div class="pregunta">
+                <label>📊 CERTEZA MENTAL (1 al 10) · ¿Cuánta certeza tienes de que ocurrirá?</label>
+                <select id="certeza_select"></select>
+            </div>
+
+            <div class="pregunta">
+                <label>💪 SENSACIÓN CORPORAL (1 al 10) · ¿Cuánto SIENTES este resultado en tu cuerpo?</label>
+                <div class="ayuda">Cierra los ojos 10 segundos. ¿Lo sientes físicamente? (calor, expansión, calma...)</div>
+                <select id="sensacion_select"></select>
+            </div>
+
+            <button id="btnAnalizar">🔍 ANALIZAR MI PROYECCIÓN</button>
+        </div>
+
+        <div id="resultado" class="resultado">
+            <div id="analisis"></div>
+            <button id="btnNuevo" class="hidden">◉ NUEVA CONSULTA</button>
+        </div>
+    </div>
+    <div class="footer">No eres ni tu mente ni tu cuerpo. Eres quien observa. Desde ahí puedes cambiarlo todo.</div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 1. CONFIGURACIÓN GLOBAL
+    // --------------------------------------------------------------
+    
+    // Generar opciones 1-10 automáticamente
+    function generarOpciones() {
+        const opciones = Array.from({length: 10}, (_, i) => i + 1);
+        return opciones.map(v => `<option value="${v}">${v}</option>`).join('');
+    }
+    
+    document.getElementById("certeza_select").innerHTML = generarOpciones();
+    document.getElementById("sensacion_select").innerHTML = generarOpciones();
+    
+    // --------------------------------------------------------------
+    // 2. FUNCIONES DE SANITIZACIÓN (seguridad XSS)
+    // --------------------------------------------------------------
+    
+    function sanitizar(texto) {
+        if (!texto) return '';
+        return texto
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+    
+    // --------------------------------------------------------------
+    // 3. DICCIONARIO BIOLÓGICO (con detección de negaciones)
+    // --------------------------------------------------------------
+    
+    function diagnosticarSintoma(texto) {
+        if (!texto) return null;
+        const textoLower = texto.toLowerCase();
+        
+        // Detectar negaciones
+        const negacion = /\b(no|nunca|jamás|sin)\b/.test(textoLower);
+        const hayDolor = /\b(dolor|molestia|tensión|pesadez|opresión)\b/.test(textoLower);
+        
+        if (negacion || !hayDolor) return null;
+        
+        // Diagnóstico por zona con exclusión de falsos positivos
+        if ((textoLower.includes("dolor de cabeza") || textoLower.includes("cefalea")) && !textoLower.includes("no me duele")) {
+            return "Dolor de cabeza = exceso de pensamiento, autoexigencia. La mente está forzando. Pausa. Respira. No necesitas resolver todo ahora.";
+        }
+        if ((textoLower.includes("pecho") || textoLower.includes("oprimido") || textoLower.includes("opresión")) && !textoLower.includes("no me duele")) {
+            return "Pecho oprimido = emoción no expresada (tristeza, rabia contenida). Permítete sentir sin juzgar. La emoción necesita salir, no ser explicada.";
+        }
+        if ((textoLower.includes("cuello") || textoLower.includes("hombros")) && (textoLower.includes("tensión") || textoLower.includes("duro"))) {
+            return "Tensión en cuello/hombros = cargas que no son tuyas. Pregunta: '¿esto es mío o lo tomé de alguien más?' Suelta lo que no te pertenece.";
+        }
+        if ((textoLower.includes("estómago") || textoLower.includes("vientre") || textoLower.includes("panza")) && (textoLower.includes("molestia") || textoLower.includes("dolor"))) {
+            return "Molestia estomacal = ansiedad o miedo no procesado. Tu cuerpo te dice que hay una situación que 'no digieres'. Baja el ritmo. Observa sin actuar.";
+        }
+        return null;
+    }
+    
+    // --------------------------------------------------------------
+    // 4. ANÁLISIS DE TIEMPO VERBAL (meta)
+    // --------------------------------------------------------------
+    
+    function analizarTiempoVerbal(texto) {
+        const textoLower = texto.toLowerCase();
+        const pasadoReal = /\b(logré|conseguí|recibí|gané|obtuve|alcancé|terminé|completé|finalicé)\b/i.test(textoLower);
+        const pasadoHipotetico = /\b(haber logrado|hubiera|habría|podría haber)\b/i.test(textoLower);
+        const futuro = /\b(quiero|voy a|necesito|espero|ojalá|quisiera|me gustaría|desearía)\b/i.test(textoLower);
+        const sensacion = /\b(siento|siento que|expansión|calor|alivio|calma|relajación|alegría)\b/i.test(textoLower);
+        
+        if (pasadoReal && !pasadoHipotetico) return { puntaje: 18, tipo: "pasado real" };
+        if (pasadoHipotetico) return { puntaje: 10, tipo: "pasado hipotético" };
+        if (futuro && !sensacion) return { puntaje: 5, tipo: "futuro sin cuerpo" };
+        if (futuro && sensacion) return { puntaje: 12, tipo: "futuro con sensación" };
+        return { puntaje: 8, tipo: "indeterminado" };
+    }
+    
+    // --------------------------------------------------------------
+    // 5. DETECCIÓN DE CONTRADICCIONES ENTRE MÓDULOS
+    // --------------------------------------------------------------
+    
+    function detectarContradicciones(emocion, cuerpo, certeza, sensacion) {
+        const contradicciones = [];
+        const emocionLower = emocion.toLowerCase();
+        const cuerpoLower = cuerpo.toLowerCase();
+        
+        if ((emocionLower.includes("confiado") || emocionLower.includes("seguro")) && 
+            (cuerpoLower.includes("tensión") || cuerpoLower.includes("dolor"))) {
+            contradicciones.push("Tu mente dice confianza, pero tu cuerpo está tenso. Hay disonancia. La materialización ocurre cuando mente y cuerpo vibran juntos.");
+        }
+        
+        if ((emocionLower.includes("ansioso") || emocionLower.includes("nervioso")) && 
+            (cuerpoLower.includes("calma") || cuerpoLower.includes("relajado"))) {
+            contradicciones.push("Dices estar ansioso, pero tu cuerpo está en calma. Revisa si la ansiedad es mental sin anclaje real.");
+        }
+        
+        if (certeza >= 8 && sensacion <= 3) {
+            contradicciones.push("Tu mente está muy segura, pero no sientes el resultado en el cuerpo. Sin sensación corporal, la proyección no se ancla.");
+        }
+        
+        return contradicciones;
+    }
+    
+    // --------------------------------------------------------------
+    // 6. DETECCIÓN DE MÚLTIPLES PUNTOS CIEGOS
+    // --------------------------------------------------------------
+    
+    function detectarPuntosCiegos(sensacion, miedoPuntaje, metaPuntaje, certeza, metaTexto, miedoTexto) {
+        const puntos = [];
+        
+        if (sensacion < 4) {
+            puntos.push("Falta sensación corporal: el primer punto de materialización es el cuerpo. El pensamiento se hace átomo cuando lo sientes.");
+        }
+        
+        if (miedoPuntaje === 0) {
+            puntos.push("Tu identidad depende del resultado. Mientras creas que 'fracasar' te define, proyectarás miedo, no certeza.");
+        }
+        
+        if (metaPuntaje <= 8 && !metaTexto.includes("siento") && !metaTexto.includes("expansión")) {
+            puntos.push("No visualizas el resultado como ya ocurrido ni lo sientes. Vibras en el futuro. La realidad solo se reorganiza desde el presente.");
+        }
+        
+        if (certeza >= 8 && sensacion <= 4) {
+            puntos.push("Disonancia mente-cuerpo: tu mente está segura, pero tu cuerpo no acompaña. La proyección se debilita.");
+        }
+        
+        if (miedoTexto.includes("fracasado") || miedoTexto.includes("no valgo") || miedoTexto.includes("inútil")) {
+            puntos.push("El miedo a no ser suficiente está presente. Observa ese pensamiento sin identificarte con él.");
+        }
+        
+        return puntos.length ? puntos : ["No hay puntos ciegos evidentes. Tu vibración actual es honesta."];
+    }
+    
+    // --------------------------------------------------------------
+    // 7. CÁLCULO NORMALIZADO DE VIBRACIÓN
+    // --------------------------------------------------------------
+    
+    function calcularVibracion(emocionPuntaje, metaPuntaje, miedoPuntaje, sensacion, certeza) {
+        // Normalizar cada variable a 0-100
+        const normEmocion = (emocionPuntaje / 20) * 100;
+        const normMeta = (metaPuntaje / 18) * 100;
+        const normMiedo = (miedoPuntaje / 8) * 100;
+        const normSensacion = (sensacion / 10) * 100;
+        const normCerteza = (certeza / 10) * 100;
+        
+        // Pesos ponderados (suma 100%)
+        const vib = (normEmocion * 0.25) + (normMeta * 0.20) + (normMiedo * 0.15) + (normSensacion * 0.25) + (normCerteza * 0.15);
+        
+        return Math.min(98, Math.max(4, Math.floor(vib)));
+    }
+    
+    // --------------------------------------------------------------
+    // 8. ANÁLISIS DE ESTADO EMOCIONAL
+    // --------------------------------------------------------------
+    
+    function analizarEmocion(texto) {
+        const lower = texto.toLowerCase();
+        let puntaje = 10;
+        let descripcion = "";
+        
+        if (lower.includes("confiado") || lower.includes("seguro")) {
+            puntaje = 18;
+            descripcion = "Estado: CONFIANZA. Buena base. Ahora ancla esa confianza en el cuerpo, no solo en la mente.";
+        } else if (lower.includes("tranquilo") || lower.includes("calma")) {
+            puntaje = 20;
+            descripcion = "Estado: CALMA. Excelente para proyectar. La calma es el canal más claro para que la realidad se reorganice.";
+        } else if (lower.includes("ansioso") || lower.includes("nervioso")) {
+            puntaje = 4;
+            descripcion = "Estado: ANSIEDAD. Energía sin dirección. No es mala, solo necesita enfoque. Pregunta: '¿qué acción pequeña canaliza esto?'";
+        } else if (lower.includes("dudoso") || lower.includes("inseguro")) {
+            puntaje = 6;
+            descripcion = "Estado: DUDA. Señal de que falta información o confianza en ti. Busca una prueba real, aunque sea pequeña.";
+        } else {
+            descripcion = "Estado: NEUTRAL o NO DECLARADO. Observa sin juicio. La claridad vendrá al sentir.";
+        }
+        
+        return { puntaje, descripcion };
+    }
+    
+    // --------------------------------------------------------------
+    // 9. ANÁLISIS DE MIEDO
+    // --------------------------------------------------------------
+    
+    function analizarMiedo(texto) {
+        const lower = texto.toLowerCase();
+        let puntaje = 6;
+        let descripcion = "";
+        
+        if (lower.includes("fracasado") || lower.includes("no valgo") || lower.includes("inútil")) {
+            puntaje = 0;
+            descripcion = "⚠️ TU IDENTIDAD DEPENDE DEL RESULTADO. Este es el punto ciego más grande. Separa 'ser' de 'tener'. No eres lo que obtienes.";
+        } else if (lower.includes("dinero") || lower.includes("perder")) {
+            puntaje = 5;
+            descripcion = "Miedo a pérdida material. Es válido, pero no dejes que paralice. La acción pequeña disuelve este miedo.";
+        } else if (lower.includes("aprendo") || lower.includes("intento")) {
+            puntaje = 8;
+            descripcion = "Tu miedo es manejable o está bien gestionado. Buen indicador. No lo elimines, obsérvalo sin que te maneje.";
+        } else {
+            descripcion = "Miedo no declarado o vago. Observa si hay algo que evitas nombrar.";
+        }
+        
+        return { puntaje, descripcion };
+    }
+    
+    // --------------------------------------------------------------
+    // 10. GENERAR AJUSTE PRÁCTICO (expandido)
+    // --------------------------------------------------------------
+    
+    function generarAjuste(sensacion, puntosCiegos, contradicciones) {
+        let ajuste = "";
+        
+        if (sensacion < 4) {
+            ajuste = "1. Cierra los ojos 3 minutos. Visualiza tu meta como ya ocurrida.\n2. Pregunta a tu cuerpo: '¿Dónde siento esto?' Si no sientes nada, respira suavemente hasta que aparezca una sensación (calor, expansión, calma).\n3. Observa tu programa mental cada vez que se distraiga con dudas o futuro. Vuelve a la sensación. Cada vez que regresas, reprogramas.";
+        } else if (puntosCiegos.some(p => p.includes("identidad"))) {
+            ajuste = "1. Repite cada mañana: 'Mi valor no depende de mis resultados. Yo soy.'\n2. Cuando notes que tu mente se identifica con el fracaso, di: 'Eso es un pensamiento, no soy yo'.\n3. Observa tu programa mental cada vez que se distraiga con miedo a no ser suficiente. Corrígelo suavemente.";
+        } else if (contradicciones.length > 0) {
+            ajuste = "1. Hay contradicción entre mente y cuerpo. Antes de actuar, respira 5 veces profundas.\n2. Pregunta a tu cuerpo: '¿qué necesitas ahora?' y actúa según la respuesta.\n3. Observa cómo corre tu programa mental. No lo juzgues. Solo obsérvalo. Eso ya es despertar.";
+        } else {
+            ajuste = "1. Escribe tu meta en pasado cada mañana. Incluye una sensación corporal.\n2. Durante el día, cuando notes que tu mente se va al futuro o al miedo, respira y vuelve a la sensación de 'ya ocurrió'.\n3. Observa cómo corre tu programa mental. No lo juzgues. Solo obsérvalo. Eso ya es despertar.";
+        }
+        
+        return ajuste;
+    }
+    
+    // --------------------------------------------------------------
+    // 11. HISTORIAL LOCAL
+    // --------------------------------------------------------------
+    
+    function guardarHistorial(vibracion, puntosCiegos) {
+        const historial = JSON.parse(localStorage.getItem("espejo_historial") || "[]");
+        historial.unshift({
+            fecha: new Date().toISOString(),
+            vibracion: vibracion,
+            puntosCiegos: puntosCiegos.slice(0, 2)
+        });
+        const historialLimitado = historial.slice(0, 10);
+        localStorage.setItem("espejo_historial", JSON.stringify(historialLimitado));
+        return historialLimitado.length;
+    }
+    
+    // --------------------------------------------------------------
+    // 12. TIEMPO ESTIMADO
+    // --------------------------------------------------------------
+    
+    function calcularTiempo(certeza, sensacion) {
+        const materializacion = (certeza + sensacion) / 2;
+        if (materializacion >= 8) return "menos de 7 días";
+        if (materializacion >= 6) return "entre 7 y 15 días";
+        if (materializacion >= 4) return "entre 15 y 30 días";
+        return "más de 30 días (primero trabaja en sentir el resultado en tu cuerpo)";
+    }
+    
+    // --------------------------------------------------------------
+    // 13. MANEJADOR PRINCIPAL
+    // --------------------------------------------------------------
+    
+    document.getElementById("btnAnalizar").onclick = function() {
+        // Obtener valores
+        const cuerpoTexto = document.getElementById("cuerpo_input").value.trim();
+        const emocionTexto = document.getElementById("emocion_input").value.trim();
+        const metaTexto = document.getElementById("meta_input").value.trim();
+        const miedoTexto = document.getElementById("miedo_input").value.trim();
+        const certeza = parseInt(document.getElementById("certeza_select").value);
+        const sensacion = parseInt(document.getElementById("sensacion_select").value);
+        
+        // Validaciones
+        if (!cuerpoTexto || !emocionTexto || !metaTexto || !miedoTexto) {
+            alert("Responde todos los módulos para obtener tu diagnóstico.");
+            return;
+        }
+        
+        // Sanitizar para mostrar
+        const cuerpoSanitizado = sanitizar(cuerpoTexto);
+        const emocionSanitizada = sanitizar(emocionTexto);
+        const metaSanitizada = sanitizar(metaTexto);
+        const miedoSanitizado = sanitizar(miedoTexto);
+        
+        // Análisis por módulo
+        const cuerpoDiagnostico = diagnosticarSintoma(cuerpoTexto) || "Tu cuerpo no reporta molestias agudas. Eso permite que la energía fluya. Aprovecha para anclar la sensación del resultado deseado.";
+        
+        const emocion = analizarEmocion(emocionTexto);
+        const meta = analizarTiempoVerbal(metaTexto);
+        const miedo = analizarMiedo(miedoTexto);
+        
+        // Contradicciones
+        const contradicciones = detectarContradicciones(emocionTexto, cuerpoTexto, certeza, sensacion);
+        
+        // Puntos ciegos
+        const puntosCiegos = detectarPuntosCiegos(sensacion, miedo.puntaje, meta.puntaje, certeza, metaTexto, miedoTexto);
+        
+        // Vibración normalizada
+        const vibracion = calcularVibracion(emocion.puntaje, meta.puntaje, miedo.puntaje, sensacion, certeza);
+        const vibracionObjetivo = Math.min(98, vibracion + 25);
+        
+        const textoObjetivo = vibracionObjetivo >= 85 ? "Si logras mantener este nivel de vibración, tu resultado puede darse rápido." :
+                              (vibracionObjetivo >= 70 ? "Aún puedes subir tu vibración. El resultado se acerca si ajustas el punto ciego." :
+                               "Tu vibración actual es baja. No es malo. Es un punto de partida. Trabaja el punto ciego antes de esperar resultados.");
+        
+        const tiempo = calcularTiempo(certeza, sensacion);
+        const ajuste = generarAjuste(sensacion, puntosCiegos, contradicciones);
+        
+        // Guardar historial
+        const totalHistorial = guardarHistorial(vibracion, puntosCiegos);
+        
+        // Construcción segura del HTML resultado
+        let html = `<div style="margin-bottom:1rem;"><strong>🌀 DIAGNÓSTICO DE CONCIENCIA APLICADA</strong></div>`;
+        
+        html += `<div class="modulo">🧬 <strong>MÓDULO CUERPO</strong><br>${sanitizar(cuerpoDiagnostico)}</div>`;
+        html += `<div class="modulo">💓 <strong>MÓDULO EMOCIÓN</strong><br>${sanitizar(emocion.descripcion)}</div>`;
+        html += `<div class="modulo">🎯 <strong>MÓDULO META</strong><br>Visualización: ${sanitizar(meta.tipo)}. ${meta.puntaje >= 14 ? "Bien. Eso ancla la proyección." : "Reescribe tu meta incluyendo una sensación física en pasado."}</div>`;
+        html += `<div class="modulo">🎭 <strong>MÓDULO MIEDO</strong><br>${sanitizar(miedo.descripcion)}</div>`;
+        
+        html += `<div class="modulo">🔴 <strong>COHERENCIA VIBRATORIA ACTUAL:</strong> ${vibracion}%<br>`;
+        html += `<strong>PUNTOS CIEGOS DETECTADOS:</strong><br>`;
+        puntosCiegos.forEach(pc => { html += `<div class="punto-ciego">${sanitizar(pc)}</div>`; });
+        
+        if (contradicciones.length > 0) {
+            html += `<strong>⚠️ CONTRADICCIONES DETECTADAS:</strong><br>`;
+            contradicciones.forEach(c => { html += `<div class="punto-ciego">${sanitizar(c)}</div>`; });
+        }
+        html += `</div>`;
+        
+        html += `<div class="modulo">🟢 <strong>VIBRACIÓN OBJETIVO:</strong> ${vibracionObjetivo}%<br>${textoObjetivo}<br>`;
+        html += `⏱️ <strong>TIEMPO ESTIMADO:</strong> ${tiempo}</div>`;
+        
+        html += `<div class="modulo">⚡ <strong>AJUSTE PRÁCTICO (observa tu programa mental):</strong><br>${sanitizar(ajuste).replace(/\n/g, '<br>')}</div>`;
+        
+        html += `<hr><div style="font-size:0.8rem;">📌 No eres ni tu mente ni tu cuerpo. Eres quien observa. Desde ahí puedes elegir otra vibración, otra sensación, otra realidad.<br>`;
+        html += `📜 Historial local: ${totalHistorial} proyecciones guardadas en este navegador.</div>`;
+        
+        document.getElementById("analisis").innerHTML = html;
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("pantallaPreguntas").classList.add("hidden");
+        document.getElementById("btnNuevo").classList.remove("hidden");
+    };
+    
+    document.getElementById("btnNuevo").onclick = function() {
+        document.getElementById("cuerpo_input").value = "";
+        document.getElementById("emocion_input").value = "";
+        document.getElementById("meta_input").value = "";
+        document.getElementById("miedo_input").value = "";
+        document.getElementById("resultado").style.display = "none";
+        document.getElementById("pantallaPreguntas").classList.remove("hidden");
+        document.getElementById("btnNuevo").classList.add("hidden");
+    };
+</script>
+</body>
+</html>

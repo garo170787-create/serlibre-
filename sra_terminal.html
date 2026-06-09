@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="color-scheme" content="dark">
+    <title>⚡ REALITY.CORE_TERMINAL | SRA v3.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-green: #00ff41;
+            --neon-cyan: #00f0ff;
+            --neon-dim: #00cc33;
+            --glass-bg: rgba(0, 0, 0, 0.55);
+            --border-glow: 0 0 6px #00ff41, 0 0 2px #00ff41;
+        }
+
+        /* FONDO CON TU IMAGEN - SIN CAPA OSCURA */
+        body {
+            background: #000000;
+            min-height: 100vh;
+            font-family: 'Share Tech Mono', 'Orbitron', monospace;
+            position: relative;
+        }
+
+        /* Imagen de fondo fija - MÁS BRILLANTE */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('fondo_core.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 1;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Contenedor principal - por encima del fondo */
+        .container {
+            position: relative;
+            z-index: 20;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* HEADER - más transparente */
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--neon-green);
+            border-radius: 12px;
+        }
+
+        .title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #00ff41, #00f0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(0,255,65,0.3);
+        }
+
+        .title::before {
+            content: "> ";
+            color: var(--neon-green);
+            background: none;
+            -webkit-background-clip: unset;
+            color: var(--neon-green);
+        }
+
+        .subtitle {
+            font-size: 0.65rem;
+            color: var(--neon-cyan);
+            letter-spacing: 1.5px;
+        }
+
+        .sys-status {
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 6px 14px;
+            border-radius: 4px;
+            border-left: 3px solid var(--neon-green);
+        }
+
+        /* GRID */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 28px;
+            margin-bottom: 32px;
+        }
+
+        /* Módulos GLASS - más transparentes para ver la imagen */
+        .panel {
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 65, 0.5);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .panel:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.3);
+            background: rgba(0, 0, 0, 0.55);
+        }
+
+        .panel h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--neon-green);
+            display: inline-block;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 3px #00f0ff;
+        }
+
+        .debug-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-green);
+            text-shadow: 0 0 2px #00ff41;
+        }
+
+        input, textarea {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #2aff6e;
+            color: #b3ffcf;
+            padding: 12px 14px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
+            background: rgba(0, 0, 0, 0.85);
+        }
+
+        button {
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid var(--neon-green);
+            color: #b3ffcf;
+            padding: 10px 20px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 6px;
+        }
+
+        button:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        .correction-box {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(0, 20, 5, 0.7);
+            border-left: 4px solid var(--neon-cyan);
+            font-size: 0.75rem;
+            border-radius: 4px;
+            color: #ccffcc;
+        }
+
+        .history-section {
+            margin-top: 28px;
+        }
+
+        .history-section h3 {
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            margin-bottom: 12px;
+            text-shadow: 0 0 2px #00f0ff;
+        }
+
+        .history-table {
+            max-height: 220px;
+            overflow-y: auto;
+            font-size: 0.65rem;
+        }
+
+        .history-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.8fr;
+            gap: 8px;
+            padding: 8px 4px;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.3);
+            color: #ccffcc;
+        }
+
+        .history-header {
+            color: var(--neon-cyan);
+            border-bottom: 1px solid var(--neon-green);
+        }
+
+        .freq-buttons {
+            display: flex;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .freq-btn {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--neon-dim);
+            color: #bbffbb;
+        }
+
+        .freq-btn.active {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        .control-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: var(--neon-green);
+        }
+
+        canvas {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            margin: 16px 0;
+            border: 1px solid rgba(0, 255, 65, 0.5);
+        }
+
+        .anchor-area {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(0, 20, 10, 0.6);
+            border-radius: 8px;
+            text-align: center;
+            border: 1px dashed var(--neon-cyan);
+        }
+
+        .anchor-command {
+            color: #ddffdd;
+            text-shadow: 0 0 2px #00ff41;
+        }
+
+        @media (max-width: 850px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0f0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="terminal-header">
+        <div>
+            <div class="title">NEURON_TERMINAL</div>
+            <div class="subtitle">[ ARQUITECTURA DE CONCIENCIA v2.0 ]</div>
+        </div>
+        <div class="sys-status">
+            ⚡ SYS.ONLINE | CORE_ACTIVE
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- PANEL DEBUGGER -->
+        <div class="panel">
+            <h2>> DEBUGGER_DE_REALIDAD</h2>
+            <div class="debug-form">
+                <div class="input-group">
+                    <label>📡 HECHO_FÍSICO</label>
+                    <textarea id="hechoInput" rows="2" placeholder="[ observación ]"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>🧠 COMANDO_MENTAL</label>
+                    <textarea id="comandoInput" rows="2" placeholder="[ pensamiento origen ]"></textarea>
+                </div>
+                <button id="analizarBtn">⚡ ANALIZAR_CAUSALIDAD</button>
+            </div>
+            <div id="correctionOutput" class="correction-box">
+                [ sistema listo ]
+            </div>
+            <div class="history-section">
+                <h3>> HISTORIAL_DE_CORRECCIONES</h3>
+                <div id="historyList" class="history-table">
+                    <div class="history-row history-header">
+                        <span>HECHO</span><span>COMANDO</span><span>CORRECCIÓN</span>
+                    </div>
+                    <div class="history-row"><span colspan="3">—— sin datos ——</span></div>
+                </div>
+                <button id="clearHistoryBtn" style="margin-top:12px;">⏸ LIMPIAR_REGISTRO</button>
+            </div>
+        </div>
+
+        <!-- PANEL SINTETIZADOR -->
+        <div class="panel">
+            <h2>> SINTETIZADOR_FRECUENCIAS [SRA]</h2>
+            <div class="freq-buttons">
+                <button data-freq="432" class="freq-btn">432Hz<br><span style="font-size:0.6rem;">ORDEN</span></button>
+                <button data-freq="528" class="freq-btn">528Hz<br><span style="font-size:0.6rem;">CLARIDAD</span></button>
+                <button data-freq="396" class="freq-btn">396Hz<br><span style="font-size:0.6rem;">CERTEZA</span></button>
+            </div>
+            <div class="control-group">
+                <button id="audioOnBtn">🔊 ACTIVAR</button>
+                <button id="audioOffBtn">🔇 SILENCIO</button>
+                <div class="volume-control">
+                    <span style="font-size:0.7rem;">GAIN</span>
+                    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.45">
+                </div>
+            </div>
+            <canvas id="waveCanvas" width="500" height="120"></canvas>
+            <div class="anchor-area">
+                <div id="anchorCommand" class="anchor-command">[ selecciona una frecuencia ]</div>
+                <button id="affirmBtn" disabled>🔗 AFIRMAR_ANCLAJE</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================================================
+    // 1. AUDIO ENGINE
+    // ======================================================
+    class AudioEngine {
+        constructor() {
+            this.audioCtx = null;
+            this.osc = null;
+            this.gain = null;
+            this.analyser = null;
+            this.isPlaying = false;
+            this.currentFreq = 432;
+            this.volume = 0.45;
+            this.animationId = null;
+        }
+        async init() {
+            if (this.audioCtx) return;
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            this.gain = this.audioCtx.createGain();
+            this.analyser = this.audioCtx.createAnalyser();
+            this.analyser.fftSize = 256;
+            this.gain.connect(this.analyser);
+            this.analyser.connect(this.audioCtx.destination);
+            this.setVolume(this.volume);
+        }
+        setVolume(val) {
+            this.volume = Math.min(1, Math.max(0, val));
+            if (this.gain) this.gain.gain.setTargetAtTime(this.volume, this.audioCtx?.currentTime || 0, 0.02);
+        }
+        start(freq) {
+            if (!this.audioCtx) return;
+            if (this.isPlaying) this.stop();
+            this.currentFreq = freq;
+            this.osc = this.audioCtx.createOscillator();
+            this.osc.type = 'sine';
+            this.osc.frequency.value = freq;
+            this.osc.connect(this.gain);
+            this.osc.start();
+            this.isPlaying = true;
+            this.startVisualizer();
+        }
+        stop() {
+            if (this.osc) {
+                this.osc.stop();
+                this.osc.disconnect();
+                this.osc = null;
+            }
+            this.isPlaying = false;
+            if (this.animationId) cancelAnimationFrame(this.animationId);
+            const canvas = document.getElementById('waveCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+        startVisualizer() {
+            const bufferLength = this.analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            const canvas = document.getElementById('waveCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const draw = () => {
+                if (!this.isPlaying || !this.analyser) return;
+                this.animationId = requestAnimationFrame(draw);
+                this.analyser.getByteTimeDomainData(dataArray);
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                ctx.fillRect(0, 0, width, height);
+                ctx.beginPath();
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2.5;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = '#00f0ff';
+                const slice = width / bufferLength;
+                let x = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0;
+                    const y = (v * height) / 2;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                    x += slice;
+                }
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            };
+            draw();
+        }
+    }
+
+    // ======================================================
+    // 2. DEBUGGER + STORAGE
+    // ======================================================
+    let logs = [];
+    function generateCorrection(hecho, comando) {
+        if (!hecho.trim() && !comando.trim()) return "[ERROR] Datos insuficientes para análisis causal.";
+        if (comando.trim()) {
+            let newCmd = comando.replace(/no\s+tengo|no\s+estoy|no\s+puedo|disperso|bloqueo/gi, (m) => {
+                if (m.includes('disperso')) return 'enfoque';
+                if (m.includes('bloqueo')) return 'fluidez';
+                return 'soy capaz';
+            });
+            if (newCmd === comando) newCmd = `Afirmo que "${comando}" se reconfigura en claridad arquitectónica.`;
+            return `⚡ Corrección: El pensamiento "${comando.substring(0,50)}" genera el hecho. Reescribe: "${newCmd.substring(0,70)}"`;
+        }
+        return `🔍 El hecho "${hecho.substring(0,60)}" es un reflejo. Indaga el comando origen.`;
+    }
+    function saveLog(hecho, comando, correccion) {
+        logs.unshift({ timestamp: new Date().toISOString().slice(0,19), hecho: hecho.substring(0,40), comando: comando.substring(0,40), correccion: correccion.substring(0,80) });
+        if (logs.length > 35) logs.pop();
+        localStorage.setItem('neuron_debug_logs', JSON.stringify(logs));
+        renderHistory();
+    }
+    function renderHistory() {
+        const container = document.getElementById('historyList');
+        if (!container) return;
+        if (logs.length === 0) {
+            container.innerHTML = `<div class="history-row history-header"><span>HECHO</span><span>COMANDO</span><span>CORRECCIÓN</span></div><div class="history-row"><span colspan="3">—— sin datos ——</span></div>`;
+            return;
+        }
+        let html = `<div class="history-row history-header"><span>HECHO</span><span>COMANDO</span><span>CORRECCIÓN</span></div>`;
+        logs.forEach(log => {
+            html += `<div class="history-row"><span>${log.hecho || '-'}</span><span>${log.comando || '-'}</span><span>${log.correccion}</span></div>`;
+        });
+        container.innerHTML = html;
+    }
+    function loadLogs() {
+        const stored = localStorage.getItem('neuron_debug_logs');
+        if (stored) { try { logs = JSON.parse(stored); } catch(e) { logs = []; } renderHistory(); }
+    }
+    function clearHistory() { logs = []; localStorage.setItem('neuron_debug_logs', '[]'); renderHistory(); document.getElementById('correctionOutput').innerHTML = '[ sistema ] historial depurado.'; }
+
+    // ======================================================
+    // 3. ANCLAJE
+    // ======================================================
+    const freqCommands = { 432: "COMANDO [432Hz - ORDEN]: Reconfiguro mi campo perceptual. Todo está en su lugar.", 528: "COMANDO [528Hz - CLARIDAD]: Disuelvo lo incierto. Restauro coherencia.", 396: "COMANDO [396Hz - CERTEZA]: Anclo la verdad. Sin duda, sin fricción." };
+    let currentFreq = 432;
+    function updateAnchorCommand(freq) {
+        currentFreq = freq;
+        document.getElementById('anchorCommand').innerText = freqCommands[freq];
+        document.getElementById('affirmBtn').disabled = false;
+    }
+    function affirmAnchor() {
+        const cmd = freqCommands[currentFreq];
+        const anchorLog = `[ANCLAJE] ${cmd.substring(0,80)}`;
+        logs.unshift({ timestamp: new Date().toISOString().slice(0,19), hecho: `Frecuencia ${currentFreq}Hz`, comando: "Anclaje activado", correccion: anchorLog });
+        localStorage.setItem('neuron_debug_logs', JSON.stringify(logs));
+        renderHistory();
+        document.getElementById('correctionOutput').innerHTML = `✅ Anclaje registrado: ${anchorLog}`;
+        const btn = document.getElementById('affirmBtn');
+        btn.style.background = "#0f0"; btn.style.color = "#000";
+        setTimeout(() => { btn.style.background = ""; btn.style.color = ""; }, 200);
+    }
+
+    // ======================================================
+    // 4. INICIALIZACIÓN
+    // ======================================================
+    document.addEventListener('DOMContentLoaded', async () => {
+        const audio = new AudioEngine();
+        await audio.init();
+        loadLogs();
+
+        document.getElementById('analizarBtn').addEventListener('click', () => {
+            const hecho = document.getElementById('hechoInput').value;
+            const comando = document.getElementById('comandoInput').value;
+            const correccion = generateCorrection(hecho, comando);
+            document.getElementById('correctionOutput').innerHTML = `> ${correccion}`;
+            if (hecho.trim() || comando.trim()) saveLog(hecho, comando, correccion);
+        });
+        document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+
+        const freqBtns = document.querySelectorAll('.freq-btn');
+        freqBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const freq = parseInt(btn.getAttribute('data-freq'), 10);
+                currentFreq = freq;
+                updateAnchorCommand(freq);
+                if (audio.isPlaying) audio.start(freq);
+                freqBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        document.getElementById('audioOnBtn').addEventListener('click', async () => {
+            if (audio.audioCtx?.state === 'suspended') await audio.audioCtx.resume();
+            audio.start(currentFreq);
+        });
+        document.getElementById('audioOffBtn').addEventListener('click', () => audio.stop());
+        document.getElementById('volumeSlider').addEventListener('input', (e) => audio.setVolume(parseFloat(e.target.value)));
+        document.getElementById('affirmBtn').addEventListener('click', affirmAnchor);
+        
+        document.querySelector('[data-freq="432"]').classList.add('active');
+        updateAnchorCommand(432);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <style>
+        body { background: #000; color: #00ffcc; font-family: 'Courier New', monospace; padding: 40px; }
+        .hud-container { border: 2px solid #00ffcc; padding: 30px; max-width: 800px; margin: auto; background: #050a0a; }
+        .espejo-inteligente { font-size: 1.2em; color: #fff; margin: 20px 0; padding: 20px; border-left: 3px solid #00ffcc; }
+        .control-input { width: 100%; padding: 10px; background: transparent; border: 1px solid #00ffcc; color: #fff; margin-top: 10px; }
+        .boton-proyectar { border: 1px solid #00ffcc; background: none; color: #00ffcc; padding: 10px 20px; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="hud-container">
+        <h1>TECNOLOGÍA DE LA CONCIENCIA: EL ESPEJO</h1>
+        <div id="espejo" class="espejo-inteligente">
+            "Soy tu proyección inteligente. Dime: ¿Qué objetivo intentas materializar ahora mismo?"
+        </div>
+        <input type="text" id="userInput" class="control-input" placeholder="Introduce tu objetivo...">
+        <button class="boton-proyectar" onclick="analizarProyeccion()">Proyectar hacia el Espejo</button>
+    </div>
+
+    <script>
+        let estado = 'INICIO';
+
+        function analizarProyeccion() {
+            const input = document.getElementById('userInput').value;
+            const espejo = document.getElementById('espejo');
+
+            if (estado === 'INICIO') {
+                espejo.innerText = `Interesante. Buscas '${input}'. Pero el objeto no es la causa. Dime: ¿Qué emoción sientes en tu cuerpo al pensar en tener eso?`;
+                estado = 'EMOCION';
+            } else if (estado === 'EMOCION') {
+                espejo.innerText = `Sientes '${input}'. Ahora, dime la verdad: ¿Esa emoción es de EXPANSION (confianza plena) o de CONTRACCION (necesidad)?`;
+                estado = 'VALIDACION';
+            } else if (estado === 'VALIDACION') {
+                if(input.toLowerCase().includes('contraccion') || input.toLowerCase().includes('necesidad')) {
+                    espejo.innerText = "ALERTA DE COHERENCIA: Estás emitiendo carencia. La proyección no puede darte lo que ya sientes que te falta. NEUTRALIZA AHORA.";
+                } else {
+                    espejo.innerText = "COHERENCIA DETECTADA. Mantén esa frecuencia de expansión. El espejo inteligente está alineando la realidad física con tu vibración actual.";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
